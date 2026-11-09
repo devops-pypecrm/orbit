@@ -6,7 +6,7 @@ import { addMemberAction, removeMemberAction, resetPasswordAction, setRoleAction
 export function AddMemberForm() {
   const [state, action, pending] = useActionState(addMemberAction, undefined);
   return (
-    <form action={action} key={state?.ok} className="grid gap-3 rounded-xl border border-zinc-200 bg-white p-4 sm:grid-cols-2">
+    <form action={action} key={state?.ok} className="grid gap-3 rounded-xl border border-zinc-200 bg-surface p-4 sm:grid-cols-2">
       <div><label className="label">Name</label><input name="name" className="input" required /></div>
       <div><label className="label">Email</label><input name="email" type="email" className="input" required /></div>
       <div><label className="label">Temporary password</label><input name="password" type="text" minLength={8} className="input" required /></div>
@@ -28,7 +28,7 @@ export function MemberActions({ id, role, isMe }: { id: string; role: string; is
   return (
     <div className={`flex items-center gap-1 text-xs ${pending ? "opacity-50" : ""}`}>
       {msg && <span className="mr-1 text-emerald-600">{msg}</span>}
-      <select className="rounded-md border border-zinc-200 bg-white px-1.5 py-1 text-xs" value={role}
+      <select className="rounded-md border border-zinc-200 bg-surface px-1.5 py-1 text-xs" value={role}
         onChange={(e) => start(() => setRoleAction(id, e.target.value))}>
         {ROLES.map((r) => <option key={r.id} value={r.id}>{r.label}</option>)}
       </select>

@@ -19,7 +19,15 @@ export const ROLES = [
 ] as const;
 export const roleLabel = (id: string) => ROLES.find((r) => r.id === id)?.label ?? id;
 
-export const COLORS = ["#6366f1", "#ec4899", "#f59e0b", "#10b981", "#0ea5e9", "#8b5cf6", "#ef4444", "#14b8a6"];
+export const TASK_TYPES = [
+  { id: "task", label: "Task", icon: "✔" },
+  { id: "feature", label: "Feature", icon: "✦" },
+  { id: "bug", label: "Bug", icon: "🐞" },
+  { id: "improvement", label: "Improvement", icon: "↑" },
+] as const;
+export const typeOf = (id: string) => TASK_TYPES.find((t) => t.id === id) ?? TASK_TYPES[0];
+
+export const COLORS = ["#22c55e", "#6366f1", "#ec4899", "#f59e0b", "#0ea5e9", "#8b5cf6", "#ef4444", "#14b8a6"];
 
 export const statusOf = (id: string) => STATUSES.find((s) => s.id === id) ?? STATUSES[0];
 export const priorityOf = (id: string) => PRIORITIES.find((p) => p.id === id) ?? PRIORITIES[1];
@@ -33,6 +41,11 @@ export type TaskCard = {
   dueDate: string | null;
   assignee: { id: string; name: string; color: string } | null;
   comments: number;
+  type: string;
+  labels: string[];
+  subtasksDone: number;
+  subtasksTotal: number;
+  editable: boolean;
 };
 
 export function dueState(iso: string | null, status: string) {

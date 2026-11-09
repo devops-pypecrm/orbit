@@ -1,15 +1,14 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useState, useTransition } from "react";
-import { createTaskAction, moveTaskAction } from "@/lib/actions";
-import { STATUSES, dueState, priorityOf, type TaskCard } from "@/lib/constants";
+import { moveTaskAction } from "@/lib/actions";
+import { STATUSES, dueState, priorityOf, typeOf, type TaskCard } from "@/lib/constants";
 import { Avatar } from "./Avatar";
 
-export function Board({ projectId, tasks: initial }: { projectId: string; tasks: TaskCard[] }) {
+export function Board({ tasks: initial }: { tasks: TaskCard[] }) {
   const [tasks, setTasks] = useState(initial);
   const [dragId, setDragId] = useState<string | null>(null);
   const [overCol, setOverCol] = useState<string | null>(null);
-  const [adding, setAdding] = useState<string | null>(null);
   const [, start] = useTransition();
   useEffect(() => setTasks(initial), [initial]);
 
@@ -33,7 +32,7 @@ export function Board({ projectId, tasks: initial }: { projectId: string; tasks:
         return (
           <section
             key={s.id}
-            onDragOver={(e) => { e.preventDefault(); setOverCol(s.id); }}
+            onDragOver={(e) => { if (dragId) { e.preventDefault(); setOverCol(s.id); } }}
             onDrop={(e) => { e.preventDefault(); drop(s.id, null); }}
             className={`flex min-w-64 flex-col rounded-xl p-2 transition ${overCol === s.id ? "bg-indigo-50 ring-2 ring-indigo-200" : "bg-zinc-100/70"}`}
           >
@@ -45,30 +44,31 @@ export function Board({ projectId, tasks: initial }: { projectId: string; tasks:
               {col.map((t) => {
                 const due = dueState(t.dueDate, t.status);
                 return (
-                  <div key={t.id} draggable
+                  <div key={t.id} draggable={t.editable}
                     onDragStart={() => setDragId(t.id)} onDragEnd={reset}
                     onDrop={(e) => { e.preventDefault(); e.stopPropagation(); drop(s.id, t.id); }}
-                    className={`cursor-grab rounded-lg border border-zinc-200 bg-white p-3 shadow-sm transition hover:border-indigo-300 active:cursor-grabbing ${dragId === t.id ? "opacity-40" : ""}`}
+                    className={`rounded-lg border border-zinc-200 bg-surface p-3 shadow-sm transition hover:border-indigo-300 ${t.editable ? "cursor-grab active:cursor-grabbing" : ""} ${dragId === t.id ? "opacity-40" : ""}`}
                   >
-                    <Link href={`?task=${t.id}`} draggable={false} className="block text-sm leading-snug">{t.title}</Link>
+                    <Link href={`?task=${t.id}`} draggable={false} className="block text-sm leading-snug">
+                      {t.type !== "task" && <span className="mr-1.5 text-xs text-zinc-400" title={typeOf(t.type).label}>{typeOf(t.type).icon}</span>}
+                      {t.title}
+                    </Link>
+                    {t.labels.length > 0 && (
+                      <div className="mt-2 flex flex-wrap gap-1">
+                        {t.labels.slice(0, 3).map((l) => <span key={l} className="rounded bg-zinc-100 px-1.5 py-0.5 text-[10px] text-zinc-500">{l}</span>)}
+                      </div>
+                    )}
                     <div className="mt-2.5 flex items-center gap-2 text-xs text-zinc-400">
                       <span className={`h-2 w-2 rounded-full ${priorityOf(t.priority).dot}`} title={priorityOf(t.priority).label} />
                       {due && <span className={due.tone}>{due.label}</span>}
+                      {t.subtasksTotal > 0 && <span>☑ {t.subtasksDone}/{t.subtasksTotal}</span>}
                       {t.comments > 0 && <span>💬 {t.comments}</span>}
                       <span className="ml-auto">{t.assignee && <Avatar name={t.assignee.name} color={t.assignee.color} size={20} />}</span>
                     </div>
                   </div>
                 );
               })}
-              {adding === s.id ? (
-                <form
-                  action={(fd) => { const title = String(fd.get("title") ?? ""); start(() => createTaskAction(projectId, s.id, title)); setAdding(null); }}
-                >
-                  <input name="title" autoFocus placeholder="Task title, then Enter" className="input" onBlur={() => setAdding(null)} onKeyDown={(e) => e.key === "Escape" && setAdding(null)} />
-                </form>
-              ) : (
-                <button onClick={() => setAdding(s.id)} className="w-full rounded-lg px-2 py-1.5 text-left text-sm text-zinc-400 hover:bg-white hover:text-zinc-700">＋ Add task</button>
-              )}
+              {col.length === 0 && <p className="px-2 py-4 text-center text-xs text-zinc-400">Nothing here</p>}
             </div>
           </section>
         );

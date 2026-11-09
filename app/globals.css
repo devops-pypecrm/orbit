@@ -2,11 +2,51 @@
 
 @theme {
   --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --color-brand: #6366f1;
+  --color-surface: #ffffff;
+  /* "indigo" is remapped to green so the whole UI uses one accent */
+  --color-indigo-50: #ecfdf3;
+  --color-indigo-100: #d3f9e1;
+  --color-indigo-200: #a8f0c6;
+  --color-indigo-300: #6fe0a0;
+  --color-indigo-400: #3ccc7b;
+  --color-indigo-500: #22b865;
+  --color-indigo-600: #16a34a;
+  --color-indigo-700: #15803d;
+}
+
+:root { --accent: #16a34a; --accent-hover: #15803d; --accent-fg: #ffffff; }
+
+/* Dark: green on black */
+.dark {
+  color-scheme: dark;
+  --accent: #22c55e; --accent-hover: #4ade80; --accent-fg: #03150a;
+  --color-surface: #0d1310;
+  --color-zinc-50: #060907;
+  --color-zinc-100: #121a16;
+  --color-zinc-200: #1d2923;
+  --color-zinc-300: #2d3d35;
+  --color-zinc-400: #6f857a;
+  --color-zinc-500: #90a69b;
+  --color-zinc-600: #b3c6bc;
+  --color-zinc-700: #cddbd3;
+  --color-zinc-800: #e2ece6;
+  --color-zinc-900: #f0f6f2;
+  --color-indigo-50: #0c2418;
+  --color-indigo-100: #123a24;
+  --color-indigo-200: #1b5c38;
+  --color-indigo-300: #238a51;
+  --color-indigo-600: #4ade80;
+  --color-indigo-700: #86efac;
+  --color-red-50: #2a1113;
+  --color-red-600: #f87171;
+  --color-amber-600: #fbbf24;
+  --color-emerald-600: #34d399;
 }
 
 body { @apply bg-zinc-50 text-zinc-900 antialiased; }
-.input { @apply w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-indigo-400 focus:ring-4 focus:ring-indigo-100; }
-.btn { @apply inline-flex items-center justify-center gap-1.5 rounded-lg bg-indigo-600 px-3.5 py-2 text-sm font-medium text-white transition hover:bg-indigo-700 disabled:opacity-60; }
+.input { @apply w-full rounded-lg border border-zinc-200 bg-surface px-3 py-2 text-sm outline-none transition focus:border-indigo-400 focus:ring-4 focus:ring-indigo-100 disabled:cursor-not-allowed disabled:opacity-60; }
+.btn { @apply inline-flex items-center justify-center gap-1.5 rounded-lg px-3.5 py-2 text-sm font-medium transition disabled:opacity-60; background: var(--accent); color: var(--accent-fg); }
+.btn:hover { background: var(--accent-hover); }
 .btn-ghost { @apply inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-zinc-600 transition hover:bg-zinc-100; }
 .label { @apply mb-1 block text-xs font-medium text-zinc-500; }
+.logo { @apply flex items-center justify-center rounded-xl font-bold; background: var(--accent); color: var(--accent-fg); }

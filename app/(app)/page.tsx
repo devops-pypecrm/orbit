@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { db } from "@/lib/db";
 import { requireUser } from "@/lib/auth";
+import { Avatar } from "@/components/Avatar";
 import { dueState, priorityOf, statusOf } from "@/lib/constants";
 
 export default async function Home() {
@@ -11,7 +12,7 @@ export default async function Home() {
       include: { project: true },
       orderBy: [{ dueDate: { sort: "asc", nulls: "last" } }, { createdAt: "desc" }],
     }),
-    db.project.findMany({ include: { tasks: { select: { status: true } } }, orderBy: { createdAt: "asc" } }),
+    db.project.findMany({ include: { tasks: { select: { status: true } }, coordinator: true, members: { include: { user: true } } }, orderBy: { createdAt: "asc" } }),
   ]);
   const now = new Date(); now.setHours(0, 0, 0, 0);
   const overdue = mine.filter((t) => t.dueDate && t.dueDate < now).length;
@@ -24,7 +25,7 @@ export default async function Home() {
       <h1 className="text-2xl font-semibold">{greet}, {user.name.split(" ")[0]} 👋</h1>
       <div className="mt-5 grid grid-cols-3 gap-3">
         {[["Open tasks", mine.length, "text-zinc-900"], ["Due soon", soon, "text-amber-600"], ["Overdue", overdue, "text-red-600"]].map(([l, n, c]) => (
-          <div key={l as string} className="rounded-xl border border-zinc-200 bg-white p-4">
+          <div key={l as string} className="rounded-xl border border-zinc-200 bg-surface p-4">
             <div className={`text-2xl font-semibold ${c}`}>{n}</div>
             <div className="text-xs text-zinc-500">{l}</div>
           </div>
@@ -32,7 +33,7 @@ export default async function Home() {
       </div>
 
       <h2 className="mb-2 mt-8 text-sm font-semibold text-zinc-500">Assigned to you</h2>
-      <div className="divide-y divide-zinc-100 rounded-xl border border-zinc-200 bg-white">
+      <div className="divide-y divide-zinc-100 rounded-xl border border-zinc-200 bg-surface">
         {mine.length === 0 && <p className="p-6 text-center text-sm text-zinc-400">Nothing on your plate. Enjoy it ☕</p>}
         {mine.map((t) => {
           const due = dueState(t.dueDate?.toISOString() ?? null, t.status);
@@ -50,15 +51,21 @@ export default async function Home() {
 
       <h2 className="mb-2 mt-8 text-sm font-semibold text-zinc-500">Projects</h2>
       <div className="grid gap-3 sm:grid-cols-2">
-        {projects.length === 0 && <p className="text-sm text-zinc-400">No projects yet — create one from the sidebar.</p>}
+        {projects.length === 0 && <p className="text-sm text-zinc-400">No projects yet — an admin can create one from the sidebar.</p>}
         {projects.map((p) => {
           const done = p.tasks.filter((t) => t.status === "done").length;
           const pct = p.tasks.length ? Math.round((done / p.tasks.length) * 100) : 0;
           return (
-            <Link key={p.id} href={`/p/${p.id}`} className="rounded-xl border border-zinc-200 bg-white p-4 transition hover:border-indigo-300 hover:shadow-sm">
+            <Link key={p.id} href={`/p/${p.id}`} className="rounded-xl border border-zinc-200 bg-surface p-4 transition hover:border-indigo-300 hover:shadow-sm">
               <div className="flex items-center gap-2"><span className="h-3 w-3 rounded" style={{ background: p.color }} /><span className="font-medium">{p.name}</span></div>
               <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-zinc-100"><div className="h-full rounded-full" style={{ width: `${pct}%`, background: p.color }} /></div>
-              <div className="mt-1.5 text-xs text-zinc-400">{done}/{p.tasks.length} done · {pct}%</div>
+              <div className="mt-1.5 flex items-center text-xs text-zinc-400">
+                <span>{done}/{p.tasks.length} done · {pct}%</span>
+                <span className="ml-auto flex -space-x-1.5">
+                  {p.members.slice(0, 4).map((m) => <span key={m.userId} className="rounded-full ring-2 ring-[var(--color-surface)]"><Avatar name={m.user.name} color={m.user.color} size={20} /></span>)}
+                </span>
+              </div>
+              <div className="mt-1 text-xs text-zinc-400">{p.coordinator ? `Coordinator: ${p.coordinator.name}` : "No coordinator"}</div>
             </Link>
           );
         })}

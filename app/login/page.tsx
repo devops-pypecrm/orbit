@@ -12,11 +12,11 @@ export default async function Login() {
     <main className="flex min-h-screen items-center justify-center p-6">
       <div className="w-full max-w-sm">
         <div className="mb-8 text-center">
-          <div className="mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-indigo-600 text-lg font-bold text-white">O</div>
+          <div className="mx-auto mb-3 logo h-11 w-11 text-lg">O</div>
           <h1 className="text-xl font-semibold">Welcome back</h1>
           <p className="text-sm text-zinc-500">Sign in to Orbit</p>
         </div>
-        <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm"><AuthForm mode="login" /></div>
+        <div className="rounded-2xl border border-zinc-200 bg-surface p-6 shadow-sm"><AuthForm mode="login" /></div>
       </div>
     </main>
   );
