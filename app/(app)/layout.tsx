@@ -29,7 +29,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     <div className="flex min-h-screen">
       <aside className="sticky top-0 hidden h-screen w-60 shrink-0 flex-col border-r border-zinc-200 bg-surface p-3 md:flex">
         <Link href="/" className="mb-4 flex items-center gap-2 px-2 py-1.5">
-          <span className="logo h-7 w-7 rounded-lg text-sm">O</span>
+          <img src="/logo.png" alt="ProHostix" className="h-8 w-8 rounded-lg" />
           <span className="font-semibold">Orbit</span>
         </Link>
         <nav className="space-y-0.5 text-sm">

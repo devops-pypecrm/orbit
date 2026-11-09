@@ -12,7 +12,7 @@ export default async function Login() {
     <main className="flex min-h-screen items-center justify-center p-6">
       <div className="w-full max-w-sm">
         <div className="mb-8 text-center">
-          <div className="mx-auto mb-3 logo h-11 w-11 text-lg">O</div>
+          <img src="/logo.png" alt="ProHostix" className="mx-auto mb-3 h-14 w-14 rounded-2xl" />
           <h1 className="text-xl font-semibold">Welcome back</h1>
           <p className="text-sm text-zinc-500">Sign in to Orbit</p>
         </div>
