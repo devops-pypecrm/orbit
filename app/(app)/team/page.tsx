@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import { requireUser } from "@/lib/auth";
+import { roleLabel } from "@/lib/constants";
 import { Avatar } from "@/components/Avatar";
 import { AddMemberForm, MemberActions } from "@/components/TeamControls";
 
@@ -16,7 +17,7 @@ export default async function Team() {
           <div key={u.id} className="flex flex-wrap items-center gap-3 px-4 py-3">
             <Avatar name={u.name} color={u.color} size={34} />
             <div className="min-w-0 flex-1">
-              <div className="text-sm font-medium">{u.name} {u.role === "ADMIN" && <span className="ml-1 rounded bg-indigo-50 px-1.5 py-0.5 text-[10px] font-semibold text-indigo-600">ADMIN</span>}</div>
+              <div className="text-sm font-medium">{u.name} <span className="ml-1 rounded bg-indigo-50 px-1.5 py-0.5 text-[10px] font-semibold text-indigo-600">{roleLabel(u.role)}</span></div>
               <div className="truncate text-xs text-zinc-400">{u.email} · {u._count.tasks} open</div>
             </div>
             {admin && <MemberActions id={u.id} role={u.role} isMe={u.id === me.id} />}

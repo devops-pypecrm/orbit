@@ -59,7 +59,7 @@ export default async function ProjectPage({ params, searchParams }: { params: Pr
             <Link href={q({ view: undefined })} className={tab(view === "board")}>Board</Link>
             <Link href={q({ view: "list" })} className={tab(view === "list")}>List</Link>
           </div>
-          {me.role === "ADMIN" && (
+          {me.role !== "DEVELOPER" && (
             <form action={async () => { "use server"; await deleteProjectAction(id); }}>
               <button className="btn-ghost text-zinc-400 hover:text-red-600" title="Delete project">🗑</button>
             </form>

@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "User" ALTER COLUMN "role" SET DEFAULT 'DEVELOPER';
+UPDATE "User" SET "role" = 'DEVELOPER' WHERE "role" = 'MEMBER';

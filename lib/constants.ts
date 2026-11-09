@@ -12,6 +12,13 @@ export const PRIORITIES = [
   { id: "urgent", label: "Urgent", dot: "bg-red-500" },
 ] as const;
 
+export const ROLES = [
+  { id: "ADMIN", label: "Admin" },
+  { id: "COORDINATOR", label: "Project Coordinator" },
+  { id: "DEVELOPER", label: "Developer" },
+] as const;
+export const roleLabel = (id: string) => ROLES.find((r) => r.id === id)?.label ?? id;
+
 export const COLORS = ["#6366f1", "#ec4899", "#f59e0b", "#10b981", "#0ea5e9", "#8b5cf6", "#ef4444", "#14b8a6"];
 
 export const statusOf = (id: string) => STATUSES.find((s) => s.id === id) ?? STATUSES[0];

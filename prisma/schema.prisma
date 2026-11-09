@@ -12,7 +12,7 @@ model User {
   name         String
   email        String    @unique
   passwordHash String
-  role         String    @default("MEMBER") // ADMIN | MEMBER
+  role         String    @default("DEVELOPER") // ADMIN | COORDINATOR | DEVELOPER
   color        String
   createdAt    DateTime  @default(now())
   tasks        Task[]

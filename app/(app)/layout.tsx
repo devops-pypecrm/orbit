@@ -2,6 +2,7 @@ import Link from "next/link";
 import { db } from "@/lib/db";
 import { requireUser } from "@/lib/auth";
 import { createProjectAction, logoutAction } from "@/lib/actions";
+import { roleLabel } from "@/lib/constants";
 import { Avatar } from "@/components/Avatar";
 
 export const dynamic = "force-dynamic";
@@ -39,7 +40,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           <Avatar name={user.name} color={user.color} size={28} />
           <div className="min-w-0 flex-1 text-sm">
             <div className="truncate font-medium leading-tight">{user.name}</div>
-            <div className="text-xs text-zinc-400">{user.role === "ADMIN" ? "Admin" : "Member"}</div>
+            <div className="text-xs text-zinc-400">{roleLabel(user.role)}</div>
           </div>
           <form action={logoutAction}><button className="rounded-md p-1.5 text-xs text-zinc-400 hover:bg-zinc-100 hover:text-zinc-700" title="Sign out">⏻</button></form>
         </div>

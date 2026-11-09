@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import bcrypt from "bcryptjs";
 import { db } from "./db";
-import { COLORS } from "./constants";
+import { COLORS, ROLES } from "./constants";
 import { createSession, destroySession, requireAdmin, requireUser } from "./auth";
 
 export type FormState = { error?: string; ok?: string } | undefined;
@@ -43,7 +43,7 @@ export async function logoutAction() {
 export async function addMemberAction(_: FormState, fd: FormData): Promise<FormState> {
   await requireAdmin();
   const name = str(fd, "name"), email = str(fd, "email").toLowerCase(), password = str(fd, "password");
-  const role = str(fd, "role") === "ADMIN" ? "ADMIN" : "MEMBER";
+  const role = ROLES.find((r) => r.id === str(fd, "role"))?.id ?? "DEVELOPER";
   if (!name || !email.includes("@")) return { error: "Enter a name and a valid email." };
   if (password.length < 8) return { error: "Password must be at least 8 characters." };
   if (await db.user.findUnique({ where: { email } })) return { error: "That email already has an account." };
@@ -55,9 +55,9 @@ export async function addMemberAction(_: FormState, fd: FormData): Promise<FormS
   return { ok: `${name} added. Share the email and password with them.` };
 }
 
-export async function setRoleAction(userId: string, role: "ADMIN" | "MEMBER") {
+export async function setRoleAction(userId: string, role: string) {
   const me = await requireAdmin();
-  if (me.id === userId) return;
+  if (me.id === userId || !ROLES.some((r) => r.id === role)) return;
   await db.user.update({ where: { id: userId }, data: { role } });
   revalidatePath("/team");
 }
@@ -90,7 +90,8 @@ export async function createProjectAction(fd: FormData) {
 }
 
 export async function deleteProjectAction(id: string) {
-  await requireAdmin();
+  const me = await requireUser();
+  if (me.role === "DEVELOPER") throw new Error("Not allowed");
   await db.project.delete({ where: { id } });
   revalidatePath("/", "layout");
   redirect("/");
